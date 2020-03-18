@@ -1,12 +1,12 @@
 {
     "x":0,
     "type":"Scene",
-    "selectedBox":25,
-    "selecteID":26,
+    "selectedBox":2,
+    "selecteID":38,
     "searchKey":"Scene",
     "props":{"width":2048,"sceneColor":"#000000","height":1024},
     "nodeParent":-1,
-    "maxID":28,
+    "maxID":40,
     "label":"Scene",
     "isOpen":true,
     "isDirectory":true,
@@ -18,7 +18,7 @@
             "x":15,
             "type":"Sprite",
             "searchKey":"Sprite,sky",
-            "props":{"y":0,"x":0,"texture":"SkyTileSprite.png","name":"sky"},
+            "props":{"zOrder":-2,"y":0,"x":0,"texture":"SkyTileSprite.png","name":"sky"},
             "nodeParent":2,
             "label":"sky",
             "isOpen":false,
@@ -64,7 +64,7 @@
             "x":15,
             "type":"Sprite",
             "searchKey":"Sprite,sky0",
-            "props":{"y":0,"x":2048,"texture":"SkyTileSprite.png","name":"sky0"},
+            "props":{"zOrder":-2,"y":0,"x":2048,"texture":"SkyTileSprite.png","name":"sky0"},
             "nodeParent":2,
             "label":"sky0",
             "isOpen":false,
@@ -170,7 +170,7 @@
             "x":15,
             "type":"Sprite",
             "searchKey":"Sprite,ground0",
-            "props":{"y":512,"x":2048,"texture":"GrassThinSprite.png","name":"ground0"},
+            "props":{"zOrder":0,"y":512,"x":2048,"texture":"GrassThinSprite.png","name":"ground0"},
             "nodeParent":2,
             "label":"ground0",
             "isOpen":false,
@@ -231,7 +231,7 @@
             "x":15,
             "type":"Animation",
             "searchKey":"Animation,brid",
-            "props":{"y":423,"x":312,"source":"bird.ani","name":"brid","autoPlay":true,"autoAnimation":"idle"},
+            "props":{"zOrder":1,"y":423,"x":312,"source":"bird.ani","name":"brid","autoPlay":true,"autoAnimation":"idle"},
             "nodeParent":2,
             "label":"brid",
             "isOpen":false,
@@ -294,14 +294,13 @@
             "props":{"y":0,"x":0,"width":2048,"name":"topedge","height":1},
             "nodeParent":2,
             "label":"topedge",
-            "isOpen":true,
+            "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":25,
             "child":[
                 {
-                    "x":30,
                     "type":"ChainCollider",
                     "switchAble":true,
                     "searchKey":"ChainCollider",
@@ -317,7 +316,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"RigidBody",
                     "switchAble":true,
                     "searchKey":"RigidBody",
@@ -332,6 +330,37 @@
                     "child":[
                         ]
                 }]
+        },
+        {
+            "x":15,
+            "type":"Script",
+            "switchAble":true,
+            "source":"src/scripts/CloumnCreate.js",
+            "searchKey":"Script,CloumnCreate",
+            "removeAble":true,
+            "props":{"columnContainer":"@node:37","column":"@Prefab:prefab/column.prefab"},
+            "nodeParent":2,
+            "label":"CloumnCreate",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":32,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Sprite",
+            "searchKey":"Sprite,columnContainer",
+            "props":{"zOrder":-1,"name":"columnContainer"},
+            "nodeParent":2,
+            "label":"columnContainer",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":37,
+            "child":[
+                ]
         }],
     "animations":[
         {

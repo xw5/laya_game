@@ -82,6 +82,36 @@
   *
   * @ author:xw
   * @ email:412832768@qq.com
+  * @ data: 2020-03-18 22:52
+  */
+  class cloumn extends Laya.Script {
+
+    constructor() {
+      super();
+      this.canAddScore = true;
+    }
+
+    onAwake() {
+    }
+
+    onUpdate() {
+      if (this.owner.x <= -210) {
+        this.owner.removeSelf();
+        Laya.Pool.recover("column", this.owner);
+        return;
+      }
+      if (this.canAddScore && this.owner.x <= 75) {
+        this.canAddScore = false;
+        console.log("增加一分!", this.owner.x, this.owner.y);
+        Laya.stage.event("addScore", 1);
+      }
+    }
+  }
+
+  /**
+  *
+  * @ author:xw
+  * @ email:412832768@qq.com
   * @ data: 2020-03-18 21:00
   */
   class CloumnCreate extends Laya.Script {
@@ -110,7 +140,7 @@
       this.timer += Laya.timer.delta;
       if (this.timer >= this.ranIntervalTime) {
         this.timer = 0;
-        this.ranIntervalTime = this.randomNum(2000, 3500);
+        this.ranIntervalTime = this.randomNum(2500, 4000);
         this.createCloumn();
       }
     }
@@ -124,20 +154,20 @@
       columnBottom.rotation = 0;
       columnBottom.x = 1994;
       columnBottom.y = randomBy;
-      columnBottom.canAddScore = true;
       this.columnContainer.addChild(columnBottom);
+      columnBottom.getComponent(cloumn).canAddScore = true;
 
       // 管道间距
       // 200 - 300
-      var ranSpacing = this.randomNum(200, 300);
+      var ranSpacing = this.randomNum(260, 350);
 
       // 生成top管道
       var columnTop = Laya.Pool.getItemByCreateFun("column",this.createFn, this);
       columnTop.rotation = 180;
       columnTop.x = 2250;
       columnTop.y = randomBy - ranSpacing;
-      columnTop.canAddScore = false;
       this.columnContainer.addChild(columnTop);
+      columnTop.getComponent(cloumn).canAddScore = false;
     }
 
     randomNum(min, max) {
@@ -155,27 +185,42 @@
   *
   * @ author:xw
   * @ email:412832768@qq.com
-  * @ data: 2020-03-18 22:52
+  * @ data: 2020-03-19 21:51
   */
-  class cloumn extends Laya.Script {
+  class UiCtrl extends Laya.Script {
 
     constructor() {
       super();
-      this.canAddScore = true;
+      /** @prop {name:score, tips:"分数展示", type:Node, default:null}*/
+      this.score=null;
+      /** @prop {name:gameOverScore, tips:"结束页分数展示", type:Node, default:null}*/
+      this.gameOverScore=null;
+      /** @prop {name:ranking, tips:"排行榜按钮", type:Node, default:null}*/
+      this.ranking=null;
+      /** @prop {name:again, tips:"重新开始游戏按钮", type:Node, default:null}*/
+      this.again=null;
+      this.nowScore = 0;
     }
 
     onAwake() {
+      this.ranking.on(Laya.Event.CLICK,this, this.lookRanking);
+      this.again.on(Laya.Event.CLICK,this, this.playAgain);
+      Laya.stage.on("addScore", this, this.addScore);
     }
 
-    onUpdate() {
-      if (this.owner.x <= -210) {
-        this.owner.removeSelf();
-        Laya.Pool.recover("column", this.owner);
-      }
-      if (this.canAddScore && this.owner.x <= 75) {
-        this.canAddScore = false;
-        console.log("增加一分!");
-      }
+    addScore(val) {
+      this.nowScore += val;
+      this.score.text = "SCORE∶ "+this.nowScore;
+      this.gameOverScore.text = "SCORE∶ "+this.nowScore;
+      console.log(this.nowScore);
+    }
+
+    lookRanking() {
+      console.log("查看排行榜！");
+    }
+
+    playAgain() {
+      console.log("开始游戏");
     }
   }
 
@@ -188,6 +233,7 @@
   		reg("scripts/AutoRolling.js",AutoRolling);
   		reg("scripts/BridCtrl.js",BridCtrl);
   		reg("scripts/CloumnCreate.js",CloumnCreate);
+  		reg("scripts/UiCtrl.js",UiCtrl);
   		reg("scripts/cloumn.js",cloumn);
       }
   }

@@ -18,10 +18,12 @@ export default class cloumn extends Laya.Script {
     if (this.owner.x <= -210) {
       this.owner.removeSelf();
       Laya.Pool.recover("column", this.owner);
+      return;
     }
     if (this.canAddScore && this.owner.x <= 75) {
       this.canAddScore = false;
-      console.log("增加一分!")
+      console.log("增加一分!", this.owner.x, this.owner.y)
+      Laya.stage.event("addScore", 1);
     }
   }
 }

@@ -1,3 +1,5 @@
+import cloumn from "./cloumn";
+
 /**
 *
 * @ author:xw
@@ -30,7 +32,7 @@ export default class CloumnCreate extends Laya.Script {
     this.timer += Laya.timer.delta;
     if (this.timer >= this.ranIntervalTime) {
       this.timer = 0;
-      this.ranIntervalTime = this.randomNum(2000, 3500);
+      this.ranIntervalTime = this.randomNum(2500, 4000);
       this.createCloumn();
     }
   }
@@ -44,20 +46,20 @@ export default class CloumnCreate extends Laya.Script {
     columnBottom.rotation = 0;
     columnBottom.x = 1994;
     columnBottom.y = randomBy;
-    columnBottom.canAddScore = true;
     this.columnContainer.addChild(columnBottom);
+    columnBottom.getComponent(cloumn).canAddScore = true;
 
     // 管道间距
     // 200 - 300
-    var ranSpacing = this.randomNum(200, 300)
+    var ranSpacing = this.randomNum(260, 350)
 
     // 生成top管道
     var columnTop = Laya.Pool.getItemByCreateFun("column",this.createFn, this);
     columnTop.rotation = 180;
     columnTop.x = 2250;
     columnTop.y = randomBy - ranSpacing;
-    columnTop.canAddScore = false;
     this.columnContainer.addChild(columnTop);
+    columnTop.getComponent(cloumn).canAddScore = false;
   }
 
   randomNum(min, max) {

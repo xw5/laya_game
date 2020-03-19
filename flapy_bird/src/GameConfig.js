@@ -2,6 +2,7 @@
 import AutoRolling from "./scripts/AutoRolling"
 import BridCtrl from "./scripts/BridCtrl"
 import CloumnCreate from "./scripts/CloumnCreate"
+import UiCtrl from "./scripts/UiCtrl"
 import cloumn from "./scripts/cloumn"
 
 export default class GameConfig {
@@ -11,6 +12,7 @@ export default class GameConfig {
 		reg("scripts/AutoRolling.js",AutoRolling);
 		reg("scripts/BridCtrl.js",BridCtrl);
 		reg("scripts/CloumnCreate.js",CloumnCreate);
+		reg("scripts/UiCtrl.js",UiCtrl);
 		reg("scripts/cloumn.js",cloumn);
     }
 }

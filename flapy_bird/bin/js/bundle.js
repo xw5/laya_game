@@ -7,23 +7,30 @@
   * @ email:412832768@qq.com
   * @ data: 2020-03-17 20:02
   */
+  let isGameOver = false;
   class BridCtrl extends Laya.Script {
 
     constructor() {
       super();
       /** @prop {name:name, tips:"点击屏幕鸟受到的作用力", type:Number, default:-10}*/
       this.force=-10;
-      this.isGameOver = false;
+      isGameOver = false;
+    }
+
+    static isGameOver() {
+      return isGameOver;
     }
 
     onAwake() {
        Laya.stage.on(Laya.Event.MOUSE_DOWN,this,this.mouseDown);
        this.owner.autoAnimation = "idle";
        this.owner.loop = false;
+       this.owner.getComponent(Laya.RigidBody).type = "static";
+       Laya.stage.on("gameStart",this, this.gameStart);
     }
 
     mouseDown() {
-      if (this.isGameOver) {
+      if (isGameOver) {
         return;
       }
       this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:0,y:this.force};
@@ -33,14 +40,23 @@
       });
     }
 
+    gameStart() {
+      isGameOver = false;
+      this.owner.getComponent(Laya.RigidBody).type = "dynamic";
+      this.owner.pos(312, 423);
+      this.owner.rotation = 0;
+    }
+
     onTriggerEnter(other) {
       if (other.owner.name == 'topedge') {
         return;
       }
 
       this.owner.autoAnimation = "die";
-      this.isGameOver = true;
-      Laya.stage.event("GameOver");
+      if (!isGameOver) {
+        Laya.stage.event("GameOver");
+      }
+      isGameOver = true;
     }
   }
 
@@ -56,20 +72,19 @@
       super();
       /** @prop {name:speed, tips:"滚动速度", type:Number, default:-3}*/
       this.speed = -3;
-      this.bird = null;
     }
 
     onAwake() {
-      this.bird = Laya.stage.getChildAt(0).getChildAt(0).getChildByName('brid').getComponent(BridCtrl);
+      //this.bird = Laya.stage.getChildAt(0).getChildAt(0).getChildByName('brid').getComponent(BridCtrl);
       this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:this.speed, y:0};
-      // Laya.stage.on("GameOver", this, function() {
-      //   this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:0, y:0};
-      // });
+      Laya.stage.on("gameStart", this, function() {
+        this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:this.speed, y:0};
+      });
       //console.log(Laya.stage);
     }
 
     onUpdate() {
-      if (this.bird.isGameOver) {
+      if (BridCtrl.isGameOver()) {
         this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:0, y:0};
       }
       if(this.owner.x <= -this.owner.width) {
@@ -124,13 +139,13 @@
       this.columnContainer=null;
       this.ranIntervalTime = 2000;
       this.timer = 0;
-      this.canCreateColumn = true;
+      this.canCreateColumn = false;
+      this.columnList = [];
     }
 
     onAwake() {
-      Laya.stage.on("GameOver", this, function() {
-        this.canCreateColumn = false;
-      });
+      Laya.stage.on("GameOver", this, this.gameOver);
+      Laya.stage.on("gameStart",this, this.gameStart);
     }
 
     onUpdate() {
@@ -145,6 +160,18 @@
       }
     }
 
+    gameOver() {
+      this.canCreateColumn = false;
+    }
+
+    gameStart() {
+      this.columnList.forEach((item) => {
+        item.removeSelf();
+      });
+      this.columnList = [];
+      this.canCreateColumn = true;
+    }
+
     createCloumn() {
       // 生成bottom管道
       // 300-625
@@ -156,7 +183,7 @@
       columnBottom.y = randomBy;
       this.columnContainer.addChild(columnBottom);
       columnBottom.getComponent(cloumn).canAddScore = true;
-
+      this.columnList.push(columnBottom);
       // 管道间距
       // 200 - 300
       var ranSpacing = this.randomNum(260, 350);
@@ -168,6 +195,7 @@
       columnTop.y = randomBy - ranSpacing;
       this.columnContainer.addChild(columnTop);
       columnTop.getComponent(cloumn).canAddScore = false;
+      this.columnList.push(columnTop);
     }
 
     randomNum(min, max) {
@@ -187,6 +215,7 @@
   * @ email:412832768@qq.com
   * @ data: 2020-03-19 21:51
   */
+  let isStart = false;
   class UiCtrl extends Laya.Script {
 
     constructor() {
@@ -195,6 +224,10 @@
       this.score=null;
       /** @prop {name:gameOverScore, tips:"结束页分数展示", type:Node, default:null}*/
       this.gameOverScore=null;
+      /** @prop {name:gameOver, tips:"结束页ui", type:Node, default:null}*/
+      this.gameOver=null;
+      /** @prop {name:startTxt, tips:"结束页ui", type:Node, default:null}*/
+      this.startTxt=null;
       /** @prop {name:ranking, tips:"排行榜按钮", type:Node, default:null}*/
       this.ranking=null;
       /** @prop {name:again, tips:"重新开始游戏按钮", type:Node, default:null}*/
@@ -206,13 +239,37 @@
       this.ranking.on(Laya.Event.CLICK,this, this.lookRanking);
       this.again.on(Laya.Event.CLICK,this, this.playAgain);
       Laya.stage.on("addScore", this, this.addScore);
+      Laya.stage.on("GameOver",this, this.gameOverFn);
+      Laya.stage.on("gameStart",this, this.gameStart);
+      Laya.stage.on(Laya.Event.CLICK, this, function(){
+        if (!isStart) {
+          this.startTxt.visible = false;
+          Laya.stage.event("gameStart");
+          isStart = true;
+        }
+      });
     }
 
     addScore(val) {
       this.nowScore += val;
-      this.score.text = "SCORE∶ "+this.nowScore;
-      this.gameOverScore.text = "SCORE∶ "+this.nowScore;
+      this.setScore(this.nowScore);
       console.log(this.nowScore);
+    }
+
+    setScore(score) {
+      this.score.text = "SCORE∶ "+score;
+      this.gameOverScore.text = "SCORE∶ "+score;
+    }
+
+    gameOverFn() {
+      this.gameOver.visible = true;
+      Laya.Tween.from(this.gameOver, {alpha:0}, 400);
+    }
+
+    gameStart() {
+      this.gameOver.visible = false;
+      this.nowScore = 0;
+      this.setScore(0);
     }
 
     lookRanking() {
@@ -221,6 +278,7 @@
 
     playAgain() {
       console.log("开始游戏");
+      Laya.stage.event("gameStart");
     }
   }
 
@@ -239,10 +297,10 @@
   }
   GameConfig.width = 2048;
   GameConfig.height = 1024;
-  GameConfig.scaleMode ="fixedwidth";
-  GameConfig.screenMode = "none";
-  GameConfig.alignV = "top";
-  GameConfig.alignH = "left";
+  GameConfig.scaleMode ="showall";
+  GameConfig.screenMode = "horizontal";
+  GameConfig.alignV = "middle";
+  GameConfig.alignH = "center";
   GameConfig.startScene = "game_scene.scene";
   GameConfig.sceneRoot = "";
   GameConfig.debug = false;

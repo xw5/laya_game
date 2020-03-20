@@ -16,13 +16,13 @@ export default class CloumnCreate extends Laya.Script {
     this.columnContainer=null;
     this.ranIntervalTime = 2000;
     this.timer = 0;
-    this.canCreateColumn = true;
+    this.canCreateColumn = false;
+    this.columnList = [];
   }
 
   onAwake() {
-    Laya.stage.on("GameOver", this, function() {
-      this.canCreateColumn = false;
-    })
+    Laya.stage.on("GameOver", this, this.gameOver);
+    Laya.stage.on("gameStart",this, this.gameStart);
   }
 
   onUpdate() {
@@ -37,6 +37,18 @@ export default class CloumnCreate extends Laya.Script {
     }
   }
 
+  gameOver() {
+    this.canCreateColumn = false;
+  }
+
+  gameStart() {
+    this.columnList.forEach((item) => {
+      item.removeSelf();
+    });
+    this.columnList = [];
+    this.canCreateColumn = true;
+  }
+
   createCloumn() {
     // 生成bottom管道
     // 300-625
@@ -48,7 +60,7 @@ export default class CloumnCreate extends Laya.Script {
     columnBottom.y = randomBy;
     this.columnContainer.addChild(columnBottom);
     columnBottom.getComponent(cloumn).canAddScore = true;
-
+    this.columnList.push(columnBottom);
     // 管道间距
     // 200 - 300
     var ranSpacing = this.randomNum(260, 350)
@@ -60,6 +72,7 @@ export default class CloumnCreate extends Laya.Script {
     columnTop.y = randomBy - ranSpacing;
     this.columnContainer.addChild(columnTop);
     columnTop.getComponent(cloumn).canAddScore = false;
+    this.columnList.push(columnTop);
   }
 
   randomNum(min, max) {

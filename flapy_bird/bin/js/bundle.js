@@ -38,6 +38,7 @@
       this.owner.once(Laya.Event.COMPLETE,this, function() {
         this.owner.autoAnimation = "idle";
       });
+      Laya.SoundManager.playSound("./audio/fly.mp3", 1);
     }
 
     gameStart() {
@@ -57,6 +58,7 @@
         Laya.stage.event("GameOver");
       }
       isGameOver = true;
+      Laya.SoundManager.playSound("./audio/die.mp3", 1);
     }
   }
 
@@ -81,6 +83,7 @@
         this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:this.speed, y:0};
       });
       //console.log(Laya.stage);
+      Laya.SoundManager.playMusic("./audio/bgmusic.mp3", 0);
     }
 
     onUpdate() {
@@ -119,6 +122,7 @@
         this.canAddScore = false;
         console.log("增加一分!", this.owner.x, this.owner.y);
         Laya.stage.event("addScore", 1);
+        Laya.SoundManager.playSound("./audio/score.mp3", 1);
       }
     }
   }

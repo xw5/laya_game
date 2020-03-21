@@ -21,6 +21,7 @@ export default class AutoRolling extends Laya.Script {
       this.owner.getComponent(Laya.RigidBody).linearVelocity = {x:this.speed, y:0};
     });
     //console.log(Laya.stage);
+    Laya.SoundManager.playMusic("./audio/bgmusic.mp3", 0);
   }
 
   onUpdate() {

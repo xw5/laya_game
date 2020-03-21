@@ -35,6 +35,7 @@ export default class BridCtrl extends Laya.Script {
     this.owner.once(Laya.Event.COMPLETE,this, function() {
       this.owner.autoAnimation = "idle";
     });
+    Laya.SoundManager.playSound("./audio/fly.mp3", 1);
   }
 
   gameStart() {
@@ -54,5 +55,6 @@ export default class BridCtrl extends Laya.Script {
       Laya.stage.event("GameOver");
     }
     isGameOver = true;
+    Laya.SoundManager.playSound("./audio/die.mp3", 1);
   }
 }

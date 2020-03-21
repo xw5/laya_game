@@ -24,6 +24,7 @@ export default class cloumn extends Laya.Script {
       this.canAddScore = false;
       console.log("增加一分!", this.owner.x, this.owner.y)
       Laya.stage.event("addScore", 1);
+      Laya.SoundManager.playSound("./audio/score.mp3", 1);
     }
   }
 }

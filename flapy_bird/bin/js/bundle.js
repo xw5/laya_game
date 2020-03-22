@@ -228,19 +228,18 @@
       this.score=null;
       /** @prop {name:gameOverScore, tips:"结束页分数展示", type:Node, default:null}*/
       this.gameOverScore=null;
+      /** @prop {name:gameHighestScore, tips:"游戏最高分", type:Node, default:null}*/
+      this.gameHighestScore=null;
       /** @prop {name:gameOver, tips:"结束页ui", type:Node, default:null}*/
       this.gameOver=null;
       /** @prop {name:startTxt, tips:"结束页ui", type:Node, default:null}*/
       this.startTxt=null;
-      /** @prop {name:ranking, tips:"排行榜按钮", type:Node, default:null}*/
-      this.ranking=null;
       /** @prop {name:again, tips:"重新开始游戏按钮", type:Node, default:null}*/
       this.again=null;
       this.nowScore = 0;
     }
 
     onAwake() {
-      this.ranking.on(Laya.Event.CLICK,this, this.lookRanking);
       this.again.on(Laya.Event.CLICK,this, this.playAgain);
       Laya.stage.on("addScore", this, this.addScore);
       Laya.stage.on("GameOver",this, this.gameOverFn);
@@ -261,23 +260,25 @@
     }
 
     setScore(score) {
-      this.score.text = "SCORE∶ "+score;
-      this.gameOverScore.text = "SCORE∶ "+score;
+      this.score.text = "得分∶ "+score;
+      this.gameOverScore.text = "本次得分∶ "+score;
     }
 
     gameOverFn() {
       this.gameOver.visible = true;
       Laya.Tween.from(this.gameOver, {alpha:0}, 400);
+      let highestScore = Laya.LocalStorage.getItem("highestBridScore");
+      if (!highestScore || highestScore < this.nowScore) {
+        highestScore = this.nowScore;
+      }
+      this.gameHighestScore.text = "最高得分∶ "+highestScore;
+      Laya.LocalStorage.setItem("highestBridScore", highestScore);
     }
 
     gameStart() {
       this.gameOver.visible = false;
       this.nowScore = 0;
       this.setScore(0);
-    }
-
-    lookRanking() {
-      console.log("查看排行榜！");
     }
 
     playAgain() {

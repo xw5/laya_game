@@ -1,12 +1,12 @@
 {
     "x":0,
     "type":"Scene",
-    "selectedBox":2,
-    "selecteID":40,
+    "selectedBox":41,
+    "selecteID":52,
     "searchKey":"Scene",
     "props":{"width":2048,"sceneColor":"#000000","height":1024},
     "nodeParent":-1,
-    "maxID":52,
+    "maxID":53,
     "label":"Scene",
     "isOpen":true,
     "isDirectory":true,
@@ -433,20 +433,6 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "searchKey":"Button,ranking",
-                            "props":{"y":499,"x":815,"width":434,"skin":"comp/button.png","sizeGrid":"8,8,9,7","name":"ranking","labelSize":52,"labelPadding":"5","labelFont":"Microsoft YaHei","labelColors":"#78e53b,#c3e31c,#c3c341","labelBold":false,"labelAlign":"center","label":"排行榜","height":109},
-                            "nodeParent":41,
-                            "label":"ranking",
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":45,
-                            "child":[
-                                ]
-                        },
-                        {
-                            "x":45,
-                            "type":"Button",
                             "searchKey":"Button,again",
                             "props":{"y":631,"x":815,"width":434,"skin":"comp/button.png","sizeGrid":"8,9,10,7","name":"again","labelStrokeColor":"#c3c341","labelSize":52,"labelPadding":"5","labelFont":"Microsoft YaHei","labelColors":"#78e53b,#c3e31c,#c3c341","labelBold":false,"labelAlign":"center","label":"重新开始","height":109},
                             "nodeParent":41,
@@ -462,13 +448,27 @@
                             "x":45,
                             "type":"Text",
                             "searchKey":"Text,gameOverScore",
-                            "props":{"y":295,"x":527,"width":1010,"visible":true,"valign":"middle","text":"SCORE∶ 0","name":"gameOverScore","height":171,"fontSize":120,"font":"Helvetica","color":"#d7e012","bold":false,"align":"center"},
+                            "props":{"y":318,"x":527,"width":1010,"visible":true,"valign":"middle","text":"本次得分∶ 0","name":"gameOverScore","height":171,"fontSize":80,"font":"SimHei","color":"#dde709","bold":false,"align":"center"},
                             "nodeParent":41,
                             "label":"gameOverScore",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
                             "compId":47,
+                            "child":[
+                                ]
+                        },
+                        {
+                            "x":45,
+                            "type":"Text",
+                            "searchKey":"Text,gameHighestScore",
+                            "props":{"y":423,"x":527,"width":1010,"visible":true,"valign":"middle","text":"最高得分∶ 0","name":"gameHighestScore","height":171,"fontSize":80,"font":"SimHei","color":"#e57207","bold":false,"align":"center"},
+                            "nodeParent":41,
+                            "label":"gameHighestScore",
+                            "isDirectory":false,
+                            "isAniNode":true,
+                            "hasChild":false,
+                            "compId":52,
                             "child":[
                                 ]
                         }]
@@ -480,7 +480,7 @@
                     "source":"src/scripts/UiCtrl.js",
                     "searchKey":"Script,UiCtrl",
                     "removeAble":true,
-                    "props":{"startTxt":"@node:51","score":"@node:50","ranking":"@node:45","gameOverScore":"@node:47","gameOver":"@node:41","again":"@node:44"},
+                    "props":{"startTxt":"@node:51","score":"@node:50","ranking":"@node:45","gameOverScore":"@node:47","gameOver":"@node:41","gameHighestScore":"@node:52","again":"@node:44"},
                     "nodeParent":40,
                     "label":"UiCtrl",
                     "isDirectory":false,

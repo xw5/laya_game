@@ -1,12 +1,12 @@
 {
     "x":0,
     "type":"Scene",
-    "selectedBox":9,
-    "selecteID":8,
+    "selectedBox":2,
+    "selecteID":14,
     "searchKey":"Scene",
     "props":{"width":1080,"sceneColor":"#000000","height":1920},
     "nodeParent":-1,
-    "maxID":14,
+    "maxID":17,
     "label":"Scene",
     "isOpen":true,
     "isDirectory":true,
@@ -81,14 +81,13 @@
             "props":{"name":"startPanel"},
             "nodeParent":2,
             "label":"startPanel",
-            "isOpen":true,
+            "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":9,
             "child":[
                 {
-                    "x":30,
                     "type":"Image",
                     "searchKey":"Image,mask_bg",
                     "props":{"y":0,"x":0,"width":1080,"skin":"Sprites/UI/bg.png","name":"mask_bg","height":1920},
@@ -102,7 +101,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Image",
                     "searchKey":"Image",
                     "props":{"y":335,"x":284,"skin":"Sprites/UI/GameLogo.png"},
@@ -116,7 +114,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Animation",
                     "searchKey":"Animation,btnplay",
                     "props":{"y":960,"x":352,"visible":true,"source":"ani/btnPlay.ani","scaleY":1.5,"scaleX":1.5,"name":"btnplay","mouseThrough":true,"autoPlay":true},
@@ -130,7 +127,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Button",
                     "searchKey":"Button,audio_on",
                     "props":{"y":1546,"x":726,"stateNum":"1","skin":"Sprites/UI/ButtonSoundOn1.png","name":"audio_on"},
@@ -144,7 +140,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Button",
                     "searchKey":"Button,audio_off",
                     "props":{"y":1546,"x":726,"stateNum":"1","skin":"Sprites/UI/ButtonSoundOff1.png","name":"audio_off"},
@@ -158,7 +153,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Script",
                     "switchAble":true,
                     "source":"src/startPanel.js",
@@ -171,6 +165,52 @@
                     "isAniNode":true,
                     "hasChild":false,
                     "compId":10,
+                    "child":[
+                        ]
+                }],
+            "$HIDDEN":true
+        },
+        {
+            "x":15,
+            "type":"Sprite",
+            "searchKey":"Sprite,player",
+            "props":{"y":1562,"x":480,"texture":"Sprites/Car1.png","name":"player"},
+            "nodeParent":2,
+            "label":"player",
+            "isOpen":null,
+            "isDirectory":true,
+            "isAniNode":true,
+            "hasChild":true,
+            "compId":14,
+            "child":[
+                {
+                    "type":"Script",
+                    "switchAble":true,
+                    "source":"src/player.js",
+                    "searchKey":"Script,player",
+                    "removeAble":true,
+                    "props":{},
+                    "nodeParent":14,
+                    "label":"player",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":15,
+                    "child":[
+                        ]
+                },
+                {
+                    "type":"RigidBody",
+                    "switchAble":true,
+                    "searchKey":"RigidBody",
+                    "removeAble":true,
+                    "props":{"type":"kinematic","enabled":true,"allowSleep":false,"allowRotation":true},
+                    "nodeParent":14,
+                    "label":"RigidBody",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":16,
                     "child":[
                         ]
                 }]

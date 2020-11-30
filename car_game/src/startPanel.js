@@ -18,14 +18,19 @@ export default class startPanel extends Laya.Script {
     }
     startPlay() {
         console.log("游戏开始");
+        this.owner.visible = false;
     }
 
     audioOnFn() {
         console.log("开启音乐");
+        this.audioOn.visible = false;
+        this.audioOff.visible = true;
     }
 
     audioOffFn() {
         console.log("关闭音乐");
+        this.audioOff.visible = false;
+        this.audioOn.visible = true;
     }
 
     onDisable() {

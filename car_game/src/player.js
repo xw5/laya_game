@@ -1,3 +1,5 @@
+import Car from "./Car";
+
 export default class player extends Laya.Script {
 
     constructor() { 
@@ -48,6 +50,18 @@ export default class player extends Laya.Script {
     }
 
     onDisable() {
+    }
+
+    onTriggerEnter(other) {
+        if (other.label == "car") {
+            // 游戏结束
+            Laya.stage.event("gameOver");
+        }
+        if (other.label == "coin") {
+            other.owner.getComponent(Car).recover();
+            // 加分 todo
+            
+        }
     }
 
     onUpdate() {

@@ -30,9 +30,13 @@ export default class Car extends Laya.Script {
     onTriggerExit(other) {
         console.log("recover0", other.label, this.sign);
         if (other.label == "bottomCollider") {
-            Laya.Pool.recover(this.sign,this.owner);
-            this.owner.removeSelf();
-            console.log("recover1", this.sign);
+            this.recover();
+            // console.log("recover1", this.sign);
         }
+    }
+
+    recover() {
+        Laya.Pool.recover(this.sign,this.owner);
+        this.owner.removeSelf();
     }
 }

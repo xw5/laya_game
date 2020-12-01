@@ -24,6 +24,49 @@
         }
     }
 
+    class Car extends Laya.Script {
+
+        constructor() { 
+            super(); 
+            /** @prop {name:speed, tips:"车速度", type:Number, default: 14}*/
+            this.speed = 14;
+
+        }
+
+        init(sign){
+            this.sign = sign;
+        }
+
+        onAwake() {
+            // this.rig = this.owner.getComponent(Laya.RigidBody);
+            // this.rig.linearVelocity={x:0, y:this.speed};
+        }
+        
+        onEnable() {
+        }
+
+        onDisable() {
+        }
+
+        onUpdate() {
+            this.owner.y = this.owner.y + Number(this.speed);
+            //console.log("car.js:", this.owner.name);
+        }
+
+        onTriggerExit(other) {
+            console.log("recover0", other.label, this.sign);
+            if (other.label == "bottomCollider") {
+                this.recover();
+                // console.log("recover1", this.sign);
+            }
+        }
+
+        recover() {
+            Laya.Pool.recover(this.sign,this.owner);
+            this.owner.removeSelf();
+        }
+    }
+
     class player extends Laya.Script {
 
         constructor() { 
@@ -74,6 +117,18 @@
         }
 
         onDisable() {
+        }
+
+        onTriggerEnter(other) {
+            if (other.label == "car") {
+                // 游戏结束
+                Laya.stage.event("gameOver");
+            }
+            if (other.label == "coin") {
+                other.owner.getComponent(Car).recover();
+                // 加分 todo
+                
+            }
         }
 
         onUpdate() {
@@ -132,45 +187,6 @@
         }
     }
 
-    class Car extends Laya.Script {
-
-        constructor() { 
-            super(); 
-            /** @prop {name:speed, tips:"车速度", type:Number, default: 14}*/
-            this.speed = 14;
-
-        }
-
-        init(sign){
-            this.sign = sign;
-        }
-
-        onAwake() {
-            // this.rig = this.owner.getComponent(Laya.RigidBody);
-            // this.rig.linearVelocity={x:0, y:this.speed};
-        }
-        
-        onEnable() {
-        }
-
-        onDisable() {
-        }
-
-        onUpdate() {
-            this.owner.y = this.owner.y + Number(this.speed);
-            //console.log("car.js:", this.owner.name);
-        }
-
-        onTriggerExit(other) {
-            console.log("recover0", other.label, this.sign);
-            if (other.label == "bottomCollider") {
-                Laya.Pool.recover(this.sign,this.owner);
-                this.owner.removeSelf();
-                console.log("recover1", this.sign);
-            }
-        }
-    }
-
     class GameManage extends Laya.Script {
 
         constructor() { 
@@ -187,11 +203,14 @@
             this.car5 = null;
             /** @prop {name:car6, tips:"汽车", type:Prefab, default:null}*/
             this.car6 = null;
+            /** @prop {name:car7, tips:"金币", type:Prefab, default:null}*/
+            this.car7 = null;
             /** @prop {name:carp, tips:"汽车", type:Node, default:null}*/
             this.carp = null;
             this.arrX = [190,370,560,760];
-            this.typeArr = [1, 2, 3, 4, 5, 6];
-
+            this.typeArr = [1, 2, 3, 4, 5, 6, 7];
+            this.begin = false;
+            this.totalCars = [];
         }
 
         onAwake() {
@@ -200,6 +219,13 @@
             Laya.timer.loop(this.loopDur, this, function() {
                 this.spwan();
                 this.loopDur = this.getRandom(400, 1000);
+            });
+            Laya.stage.on("startGame",this, function() {
+                this.begin = true;
+            });
+            Laya.stage.on("gameOver",this, function() {
+                this.begin = false;
+                this.clearCars();
             });
         }
         
@@ -211,6 +237,7 @@
 
         // x 190 380 570 760
         spwan() { 
+            if (!this.begin) return;
             var carY = -300;
             var carX = this.arrX[this.getRandom(0, this.arrX.length)];
 
@@ -221,13 +248,20 @@
             }, this);
             this.carp.addChild(nowCar);
             nowCar.pos(carX, carY);
-            console.log("当前坐标：", carX, carY, nowCar.name);
+            //console.log("当前坐标：", carX, carY, nowCar.name);
             nowCar.getComponent(Car).init(carIndex);
+            this.totalCars.push(nowCar);
         }
 
         getRandom(min, max) {
             var value = (max -min)* Math.random();
             return parseInt(min + value);
+        }
+
+        clearCars() {
+            this.totalCars.forEach(function(item){
+                item.removeSelf();
+            });
         }
     }
 

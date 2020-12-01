@@ -1,12 +1,12 @@
 {
     "x":0,
     "type":"Scene",
-    "selectedBox":2,
-    "selecteID":55,
+    "selectedBox":14,
+    "selecteID":66,
     "searchKey":"Scene",
     "props":{"width":1080,"sceneColor":"#000000","height":1920},
     "nodeParent":-1,
-    "maxID":56,
+    "maxID":67,
     "label":"Scene",
     "isOpen":true,
     "isDirectory":true,
@@ -95,13 +95,14 @@
             "props":{"y":1514,"x":540,"width":120,"texture":"Sprites/Car1.png","pivotY":118,"pivotX":60,"name":"player","height":236},
             "nodeParent":2,
             "label":"player",
-            "isOpen":null,
+            "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":14,
             "child":[
                 {
+                    "x":30,
                     "type":"Script",
                     "switchAble":true,
                     "source":"src/player.js",
@@ -118,6 +119,7 @@
                         ]
                 },
                 {
+                    "x":30,
                     "type":"RigidBody",
                     "switchAble":true,
                     "searchKey":"RigidBody",
@@ -129,6 +131,22 @@
                     "isAniNode":true,
                     "hasChild":false,
                     "compId":18,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"PolygonCollider",
+                    "switchAble":true,
+                    "searchKey":"PolygonCollider",
+                    "removeAble":true,
+                    "props":{"points":"77,9,108,39,109,204,86,225,35,227,14,205,9,42,39,11"},
+                    "nodeParent":14,
+                    "label":"PolygonCollider",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":66,
                     "child":[
                         ]
                 }]
@@ -236,7 +254,7 @@
             "source":"src/GameManage.js",
             "searchKey":"Script,GameManage",
             "removeAble":true,
-            "props":{"carp":"@node:55","car6":"@Prefab:prefab/car_6.prefab","car5":"@Prefab:prefab/car_5.prefab","car4":"@Prefab:prefab/car_4.prefab","car3":"@Prefab:prefab/car_3.prefab","car2":"@Prefab:prefab/car_2.prefab","car1":"@Prefab:prefab/car_1.prefab"},
+            "props":{"carp":"@node:55","car7":"@Prefab:prefab/coin.prefab","car6":"@Prefab:prefab/car_6.prefab","car5":"@Prefab:prefab/car_5.prefab","car4":"@Prefab:prefab/car_4.prefab","car3":"@Prefab:prefab/car_3.prefab","car2":"@Prefab:prefab/car_2.prefab","car1":"@Prefab:prefab/car_1.prefab"},
             "nodeParent":2,
             "label":"GameManage",
             "isDirectory":false,

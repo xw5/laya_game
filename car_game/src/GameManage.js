@@ -16,11 +16,14 @@ export default class GameManage extends Laya.Script {
         this.car5 = null;
         /** @prop {name:car6, tips:"汽车", type:Prefab, default:null}*/
         this.car6 = null;
+        /** @prop {name:car7, tips:"金币", type:Prefab, default:null}*/
+        this.car7 = null;
         /** @prop {name:carp, tips:"汽车", type:Node, default:null}*/
         this.carp = null;
         this.arrX = [190,370,560,760];
-        this.typeArr = [1, 2, 3, 4, 5, 6];
-
+        this.typeArr = [1, 2, 3, 4, 5, 6, 7];
+        this.begin = false;
+        this.totalCars = [];
     }
 
     onAwake() {
@@ -29,6 +32,13 @@ export default class GameManage extends Laya.Script {
         Laya.timer.loop(this.loopDur, this, function() {
             this.spwan();
             this.loopDur = this.getRandom(400, 1000);
+        });
+        Laya.stage.on("startGame",this, function() {
+            this.begin = true;
+        });
+        Laya.stage.on("gameOver",this, function() {
+            this.begin = false;
+            this.clearCars();
         });
     }
     
@@ -40,6 +50,7 @@ export default class GameManage extends Laya.Script {
 
     // x 190 380 570 760
     spwan() { 
+        if (!this.begin) return;
         var carY = -300;
         var carX = this.arrX[this.getRandom(0, this.arrX.length)];
 
@@ -50,12 +61,19 @@ export default class GameManage extends Laya.Script {
         }, this);
         this.carp.addChild(nowCar);
         nowCar.pos(carX, carY);
-        console.log("当前坐标：", carX, carY, nowCar.name);
+        //console.log("当前坐标：", carX, carY, nowCar.name);
         nowCar.getComponent(Car).init(carIndex);
+        this.totalCars.push(nowCar);
     }
 
     getRandom(min, max) {
         var value = (max -min)* Math.random();
         return parseInt(min + value);
+    }
+
+    clearCars() {
+        this.totalCars.forEach(function(item){
+            item.removeSelf();
+        });
     }
 }

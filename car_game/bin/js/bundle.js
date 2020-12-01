@@ -6,7 +6,7 @@
         constructor() { 
             super(); 
             /** @prop {name:speed, tips:"跑道速度", type:Int, default:20}*/
-            let speed = 20;
+            this.speed = 20;
         }
         
         onAwake() {
@@ -29,9 +29,9 @@
         constructor() { 
             super(); 
             /** @prop {name:forceRateX, tips:"车子力的强度", type:Int, default:6}*/
-            let forceRateX = 6;
+            this.forceRateX = 6;
             /** @prop {name:forceRateDeg, tips:"车子力的强度", type:Int, default:25}*/
-            let forceRateDeg = 25;
+            this.forceRateDeg = 25;
             this.playerMinx = 200;
             this.playerMaxX = 880;
             this.isBegin = false;
@@ -97,11 +97,11 @@
         constructor() { 
             super(); 
             /** @prop {name:btnPlay, tips:"开始按钮", type:Node, default:null}*/
-            let btnPlay = null;
+            this.btnPlay = null;
             /** @prop {name:audioOn, tips:"开启音乐按钮", type:Node, default:null}*/
-            let audioOn = null;
+            this.audioOn = null;
             /** @prop {name:audioOff, tips:"关闭按钮", type:Node, default:null}*/
-            let audioOff = null;
+            this.audioOff = null;
 
         }
         
@@ -132,96 +132,22 @@
         }
     }
 
-    class GameManage extends Laya.Script {
-
-        constructor() { 
-            super(); 
-            /** @prop {name:car1, tips:"汽车", type:Prefab, default:null}*/
-            let car1 = null;
-            /** @prop {name:car2, tips:"汽车", type:Prefab, default:null}*/
-            let car2 = null;
-            /** @prop {name:car3, tips:"汽车", type:Prefab, default:null}*/
-            let car3 = null;
-            /** @prop {name:car4, tips:"汽车", type:Prefab, default:null}*/
-            let car4 = null;
-            /** @prop {name:car5, tips:"汽车", type:Prefab, default:null}*/
-            let car5 = null;
-            /** @prop {name:car6, tips:"汽车", type:Prefab, default:null}*/
-            let car6 = null;
-
-        }
-
-        onAwake() {
-            // 随机随时生成汽车
-            // this.loopDur = this.getRandom(1000, 3000);
-            // Laya.timer.loop(this.loopDur, this, function() {
-            //     // this.spwan();
-            //     this.loopDur = this.getRandom(1000, 3000);
-            //     var nowCar = this.car1.create();
-            //     Laya.stage.addChild(nowCar);
-            //     nowCar.pos(100, 100)
-            // });
-            var nowCar = this.car1.create();
-            Laya.stage.addChild(nowCar);
-            nowCar.pos(100, 100);
-        }
-        
-        onEnable() {
-        }
-
-        onDisable() {
-        }
-
-        // x 190 380 570 760
-        spwan() {
-            var arrX = [190,380,570,760];
-            var carY = -300;
-            var carX = arrX[this.getRandom(0, arrX.length)];
-
-            var typeArr = [1,2,3,4,5,6];
-            var typeIndex = this.getRandom(0, typeArr.length);
-            var nowCar = null;
-            switch(typeArr[typeIndex]){
-                case 1:
-                    nowCar = this.car1.create();
-                    break;
-                case 2:
-                    nowCar = this.car2.create();
-                    break;
-                case 3:
-                    nowCar = this.car3.create();
-                    break;
-                case 4:
-                    nowCar = this.car4.create();
-                    break;
-                case 5:
-                    nowCar = this.car5.create();
-                    break;
-                case 6:
-                    nowCar = this.car6.create();
-                    break;           
-            }
-            Laya.stage.addChild(nowCar);
-            nowCar.pos(carX, carY);
-        }
-
-        getRandom(min, max) {
-            var value = (max -min)* Math.random();
-            return parseInt(min + value);
-        }
-    }
-
     class Car extends Laya.Script {
 
         constructor() { 
             super(); 
             /** @prop {name:speed, tips:"车速度", type:Number, default: 14}*/
-            let speed = 14;
+            this.speed = 14;
 
         }
 
-        onAwake() {
+        init(sign){
+            this.sign = sign;
+        }
 
+        onAwake() {
+            // this.rig = this.owner.getComponent(Laya.RigidBody);
+            // this.rig.linearVelocity={x:0, y:this.speed};
         }
         
         onEnable() {
@@ -232,7 +158,76 @@
 
         onUpdate() {
             this.owner.y = this.owner.y + Number(this.speed);
-            console.log("car.js:", this.owner.y);
+            //console.log("car.js:", this.owner.name);
+        }
+
+        onTriggerExit(other) {
+            console.log("recover0", other.label, this.sign);
+            if (other.label == "bottomCollider") {
+                Laya.Pool.recover(this.sign,this.owner);
+                this.owner.removeSelf();
+                console.log("recover1", this.sign);
+            }
+        }
+    }
+
+    class GameManage extends Laya.Script {
+
+        constructor() { 
+            super(); 
+            /** @prop {name:car1, tips:"汽车", type:Prefab, default:null}*/
+            this.car1 = null;
+            /** @prop {name:car2, tips:"汽车", type:Prefab, default:null}*/
+            this.car2 = null;
+            /** @prop {name:car3, tips:"汽车", type:Prefab, default:null}*/
+            this.car3 = null;
+            /** @prop {name:car4, tips:"汽车", type:Prefab, default:null}*/
+            this.car4 = null;
+            /** @prop {name:car5, tips:"汽车", type:Prefab, default:null}*/
+            this.car5 = null;
+            /** @prop {name:car6, tips:"汽车", type:Prefab, default:null}*/
+            this.car6 = null;
+            /** @prop {name:carp, tips:"汽车", type:Node, default:null}*/
+            this.carp = null;
+            this.arrX = [190,370,560,760];
+            this.typeArr = [1, 2, 3, 4, 5, 6];
+
+        }
+
+        onAwake() {
+            // 随机随时生成汽车
+            this.loopDur = this.getRandom(400, 1000);
+            Laya.timer.loop(this.loopDur, this, function() {
+                this.spwan();
+                this.loopDur = this.getRandom(400, 1000);
+            });
+        }
+        
+        onEnable() {
+        }
+
+        onDisable() {
+        }
+
+        // x 190 380 570 760
+        spwan() { 
+            var carY = -300;
+            var carX = this.arrX[this.getRandom(0, this.arrX.length)];
+
+            var typeIndex = this.getRandom(0, this.typeArr.length);
+            var carIndex = this.typeArr[typeIndex];
+            var nowCar = Laya.Pool.getItemByCreateFun(String(carIndex),function() {
+                return this['car'+carIndex].create()
+            }, this);
+            this.carp.addChild(nowCar);
+            nowCar.pos(carX, carY);
+            console.log("当前坐标：", carX, carY, nowCar.name);
+            nowCar.getComponent(Car).init(carIndex);
+        }
+
+        getRandom(min, max) {
+            var value = (max -min)* Math.random();
+            return parseInt(min + value);
         }
     }
 
@@ -252,7 +247,7 @@
     GameConfig.width = 1080;
     GameConfig.height = 1920;
     GameConfig.scaleMode ="showall";
-    GameConfig.screenMode = "vertical";
+    GameConfig.screenMode = "none";
     GameConfig.alignV = "middle";
     GameConfig.alignH = "center";
     GameConfig.startScene = "mainScene.scene";

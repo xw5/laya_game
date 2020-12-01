@@ -3,9 +3,9 @@ export default class player extends Laya.Script {
     constructor() { 
         super(); 
         /** @prop {name:forceRateX, tips:"车子力的强度", type:Int, default:6}*/
-        let forceRateX = 6;
+        this.forceRateX = 6;
         /** @prop {name:forceRateDeg, tips:"车子力的强度", type:Int, default:25}*/
-        let forceRateDeg = 25;
+        this.forceRateDeg = 25;
         this.playerMinx = 200;
         this.playerMaxX = 880;
         this.isBegin = false;

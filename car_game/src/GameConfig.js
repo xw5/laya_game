@@ -19,7 +19,7 @@ export default class GameConfig {
 GameConfig.width = 1080;
 GameConfig.height = 1920;
 GameConfig.scaleMode ="showall";
-GameConfig.screenMode = "vertical";
+GameConfig.screenMode = "none";
 GameConfig.alignV = "middle";
 GameConfig.alignH = "center";
 GameConfig.startScene = "mainScene.scene";

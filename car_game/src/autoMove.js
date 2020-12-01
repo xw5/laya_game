@@ -3,7 +3,7 @@ export default class autoMove extends Laya.Script {
     constructor() { 
         super(); 
         /** @prop {name:speed, tips:"跑道速度", type:Int, default:20}*/
-        let speed = 20;
+        this.speed = 20;
     }
     
     onAwake() {

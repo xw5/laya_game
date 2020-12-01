@@ -8,7 +8,7 @@ export default class startPanel extends Laya.Script {
         let audioOn = null;
         /** @prop {name:audioOff, tips:"关闭按钮", type:Node, default:null}*/
         let audioOff = null;
-        
+
     }
     
     onEnable() {
@@ -19,6 +19,7 @@ export default class startPanel extends Laya.Script {
     startPlay() {
         console.log("游戏开始");
         this.owner.visible = false;
+        Laya.stage.event("startGame");
     }
 
     audioOnFn() {

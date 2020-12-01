@@ -1,4 +1,4 @@
-// v1.8.2
+// v1.8.5
 const ideModuleDir = global.ideModuleDir;
 const workSpaceDir = global.workSpaceDir;
 
@@ -11,9 +11,9 @@ const del = require(ideModuleDir + "del");
 const iconv =  require(ideModuleDir + "iconv-lite");
 const revCollector = require(ideModuleDir + 'gulp-rev-collector');
 const request = require(ideModuleDir + "request");
+const { getEngineVersion, canUsePluginEngine } = require("./pub_utils");
 
 let fullRemoteEngineList = ["laya.core.js", "laya.webgl.js", "laya.filter.js", "laya.ani.js", "laya.d3.js", "laya.html.js", "laya.particle.js", "laya.ui.js", "laya.d3Plugin.js", "bytebuffer.js", "laya.device.js", "laya.physics.js", "laya.physics3D.js", "laya.tiledmap.js", "worker.js", "workerloader.js"];
-
 let copyLibsTask = ["copyPlatformLibsJsFile"];
 let versiontask = ["version2"];
 
@@ -458,47 +458,6 @@ require("./libs/laya.vvmini.js");\nrequire("./index.js");`;
 	fs.writeFileSync(filePath, fileContent, "utf8");
 })
 
-function getEngineVersion() {
-	let coreLibPath = path.join(workSpaceDir, "bin", "libs", "laya.core.js");
-	let isHasCoreLib = fs.existsSync(coreLibPath);
-	let isOldAsProj = fs.existsSync(`${workSpaceDir}/asconfig.json`) && !isHasCoreLib;
-	let isNewTsProj = fs.existsSync(`${workSpaceDir}/src/tsconfig.json`) && !isHasCoreLib;
-	let EngineVersion;
-	if (isHasCoreLib) {
-		let con = fs.readFileSync(coreLibPath, "utf8");
-		let matchList = con.match(/Laya\.version\s*=\s*['"]([0-9\.]+(beta)?.*)['"]/);
-		if (!Array.isArray(matchList)) {
-			return null;
-		}
-		EngineVersion = matchList[1];
-	} else { // newts项目和旧版本as项目
-		if (isOldAsProj) {
-			let coreLibFilePath = path.join(workSpaceDir, "libs", "laya", "src", "Laya.as");
-			if (!fs.existsSync(coreLibFilePath)) {
-				return null;
-			}
-			let con = fs.readFileSync(coreLibFilePath, "utf8");
-			let matchList = con.match(/version:String\s*=\s*['"]([0-9\.]+(beta)?.*)['"]/);
-			if (!Array.isArray(matchList)) {
-				return null;
-			}
-			EngineVersion = matchList[1];
-		} else if (isNewTsProj) {
-			let coreLibFilePath = path.join(workSpaceDir, "libs", "Laya.ts");
-			if (!fs.existsSync(coreLibFilePath)) {
-				return null;
-			}
-			let con = fs.readFileSync(coreLibFilePath, "utf8");
-			let matchList = con.match(/static\s*version:\s*string\s*=\s*['"]([0-9\.]+(beta)?.*)['"]/);
-			if (!Array.isArray(matchList)) {
-				return null;
-			}
-			EngineVersion = matchList[1];
-		}
-	}
-	return EngineVersion;
-}
-
 gulp.task("modifyMinJs_VIVO", ["modifyFile_VIVO"], function() {
 	let fileJsPath = path.join(projSrc, "game.js");
 	let content = fs.readFileSync(fileJsPath, "utf-8");
@@ -706,9 +665,14 @@ gulp.task("pluginEngin_VIVO", ["dealNoCompile2_VIVO"], function(cb) {
 	if (isOldAsProj || isNewTsProj) {
 		// 下载对应版本js引擎，按照普通项目走
 		console.log(`ts源码项目(${isNewTsProj})或as源码项目(${isOldAsProj})，开始处理引擎`);
-		let engineNum = EngineVersion.replace("beta", "");
-		let suffix = EngineVersion.includes("beta") ? "_beta" : "";
-		let engineURL = `http://ldc.layabox.com/download/LayaAirJS_${engineNum}${suffix}.zip`;
+		let engineNum = EngineVersion.split("beta")[0];
+		let suffix = EngineVersion.includes("beta") ? `_beta${EngineVersion.split("beta")[1]}` : "";
+		let engineURL;
+		if (canUsePluginEngine(EngineVersion, "2.7.2")) { // 2.7.2 开始，下载地址更新为 cos 服务器
+			engineURL = `https://ldc-1251285021.cos.ap-shanghai.myqcloud.com/download/Libs/LayaAirJS_${engineNum}${suffix}.zip`;
+		} else {
+			engineURL = `http://ldc.layabox.com/download/LayaAirJS_${engineNum}${suffix}.zip`;
+		}
 		let engineDownPath = path.join(releaseDir, `LayaAirJS_${engineNum}${suffix}.zip`);
 		let engineExtractPath = path.join(releaseDir, `LayaAirJS_${engineNum}${suffix}`);
 		if (config.useMinJsLibs) {

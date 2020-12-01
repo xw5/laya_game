@@ -261,7 +261,7 @@
 
     setScore(score) {
       this.score.text = "得分∶ "+score;
-      this.gameOverScore.text = "本次得分∶ "+score;
+      this.gameOverScore.text = "本局得分∶ "+score;
     }
 
     gameOverFn() {
@@ -271,7 +271,7 @@
       if (!highestScore || highestScore < this.nowScore) {
         highestScore = this.nowScore;
       }
-      this.gameHighestScore.text = "最高得分∶ "+highestScore;
+      this.gameHighestScore.text = "历史最高∶ "+highestScore;
       Laya.LocalStorage.setItem("highestBridScore", highestScore);
     }
 

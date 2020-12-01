@@ -1,4 +1,4 @@
-// v1.8.3
+// v1.8.6
 //是否使用IDE自带的node环境和插件，设置false后，则使用自己环境(使用命令行方式执行)
 const useIDENode = process.argv[0].indexOf("LayaAir") > -1 ? true : false;
 const useCMDNode = process.argv[1].indexOf("layaair2-cmd") > -1 ? true : false;
@@ -28,7 +28,7 @@ const babel = require(ideModuleDir + 'gulp-babel');
 
 // 结合compile.js使用
 global.publish = true;
-const fileList = ["compile.js", "publish_xmgame.js", "publish_oppogame.js", "publish_vivogame.js", "publish_biligame.js", "publish_alipaygame.js", "publish_wxgame.js", "publish_bdgame.js", "publish_qqgame.js", "publish_bytedancegame.js", "publish_hwgame.js", "publish_taobaominiapp.js"];
+const fileList = ["compile.js", "pub_utils.js", "publish_xmgame.js", "publish_oppogame.js", "publish_vivogame.js", "publish_biligame.js", "publish_alipaygame.js", "publish_wxgame.js", "publish_bdgame.js", "publish_qqgame.js", "publish_bytedancegame.js", "publish_hwgame.js", "publish_taobaominiapp.js"];
 requireDir('./', {
 	filter: function (fullPath) {
 		// 只用到了compile.js和publish.js
@@ -207,6 +207,13 @@ gulp.task("clearReleaseDir", ["compile"], function (cb) {
 				delList = delList.concat(`!${releaseDir}`, `!${releaseDir}/{game.js,game.json,project.swan.json}`);
 			} else if (platform === "biligame") {
 				delList = delList.concat(`!${releaseDir}`, `!${releaseDir}/{game.js,game.json}`);
+			} else if (platform === "taobaominiapp") { // 特殊的，淘宝平台，仅删除确定为我们的文件
+				// 删除 node_modules/layaengine/libs 下引擎文件，以及 node_modules/layaengine/laya.js 文件
+				// 删除 pages/index 下除 game.js,game.json,game.axml 外所有文件
+				// release/taobaominiapp/node_modules/layaengine/adapter.js 必更新
+				delList = [`${releaseDir}/node_modules/layaengine/libs`, `${releaseDir}/node_modules/layaengine/laya.js`,
+							// `${releaseDir}/node_modules/layaengine`, `!${releaseDir}/node_modules/layaengine`, `!${releaseDir}/node_modules/layaengine/{adapter.js,index.js/package.json}`,
+							`${releaseDir}/pages/index/**`, `!${releaseDir}/pages/index`, `!${releaseDir}/pages/index/{game.js,game.json,game.axml}`];
 			}
 		}
 		del(delList, { force: true }).then(paths => {
@@ -242,7 +249,7 @@ gulp.task("copyFile", ["clearReleaseDir"], function () {
 	}
 	// 快游戏，需要新建一个快游戏项目，拷贝的只是项目的一部分，将文件先拷贝到文件夹的临时目录中去
 	if ([...QUICKGAMELIST, "taobaominiapp"].includes(platform)) {
-		releaseDir = global.tempReleaseDir = path.join(releaseDir, "temprelease");
+		releaseDir = global.tempReleaseDir = path.join(releaseDir, "temprelease").replace(/\\/g, "/");
 	}
 	if (config.exclude) { // 排除文件
 		config.excludeFilter.forEach(function(item, index, list) {
@@ -399,7 +406,7 @@ gulp.task("es6toes5", platformCopyTask, function() {
 		return gulp.src(`${releaseDir}/**/*.js`, { base: releaseDir })
 		.pipe(babel({
 			presets: ['@babel/env'],
-			compact: true
+			compact: false // 1) 为规避500K限制，不能为"auto" 2) 为便于调试，并防止开发者误解已经经过压缩，调整为false
 		})) 
 		.on('error', function (err) {
 			console.warn(err.toString());
@@ -419,28 +426,49 @@ gulp.task("compressJson", ["es6toes5"], function () {
 
 // 压缩js
 gulp.task("compressJs", ["compressJson"], function () {
-	if (config.compressJs) {
-		let options = {
-			mangle: {
-				keep_fnames:true
-			}
+	let compressJsFilter = null;
+	if (!config.compressJs) {
+		if (config.es6toes5 && config.useMinJsLibs) { // 如果开启了es6toes5并使用了压缩版类库
+			console.log("发布提示:\n 您当前开启了es6toes5并使用了压缩版类库，为了保证符合预期，脚本将对min文件夹下类库进行压缩");
+			compressJsFilter = [`${releaseDir}/libs/min/**/*.js`];
 		}
-		if ("taobaominiapp" === platform) {
-			options = {
-				mangle: {
-					keep_fnames:true,
-					// sequences: false, // 不使用逗号
-					reserved: ["window"]
-				}
+	} else {
+		if (config.es6toes5 && config.useMinJsLibs) { // 如果开启了es6toes5并使用了压缩版类库
+			console.log("发布提示:\n 您当前开启了es6toes5并使用了压缩版类库，为了保证符合预期，脚本将对min文件夹下类库进行压缩");
+			compressJsFilter = config.compressJsFilter;
+			let index = compressJsFilter.indexOf(`!${releaseDir}/libs/min/**/*.js`)
+			if (index !== -1) {
+				compressJsFilter.splice(index, 1);
 			}
+		} else {
+			compressJsFilter = config.compressJsFilter;
 		}
-		return gulp.src(config.compressJsFilter, { base: releaseDir })
-			.pipe(uglify(options))
-			.on('error', function (err) {
-				console.warn(err.toString());
-			})
-			.pipe(gulp.dest(releaseDir));
 	}
+	if (!compressJsFilter) {
+		return;
+	}
+
+	let options = {
+		mangle: {
+			keep_fnames:true
+		}
+	}
+	if ("taobaominiapp" === platform) {
+		options = {
+			mangle: {
+				keep_fnames:true,
+				// sequences: false, // 不使用逗号
+				reserved: ["window"]
+			}
+		}
+	}
+	console.log("compressJsFilter: ", compressJsFilter);
+	return gulp.src(compressJsFilter, { base: releaseDir })
+		.pipe(uglify(options))
+		.on('error', function (err) {
+			console.warn(err.toString());
+		})
+		.pipe(gulp.dest(releaseDir));
 });
 
 // 压缩png，jpg
@@ -573,7 +601,7 @@ gulp.task("packfile", platformTask, function() {
 		fs.unlinkSync(releasePackfile);
 	}
 	if ("taobaominiapp" === platform) {
-		releaseDir = releaseDir.replace("\\temprelease", "").replace("\\pages/index", "");
+		releaseDir = releaseDir.replace("/temprelease", "").replace("/pages/index", "");
 		for (let len = config.packfileFullValue.length, i = 0; i < len; i++) {
 			config.packfileFullValue[i] = config.packfileFullValue[i].replace("temprelease", "");
 		}

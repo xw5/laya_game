@@ -1,4 +1,4 @@
-// v1.0.1
+// v1.1.0
 const ideModuleDir = global.ideModuleDir;
 const workSpaceDir = global.workSpaceDir;
 
@@ -6,7 +6,6 @@ const workSpaceDir = global.workSpaceDir;
 const gulp = require(ideModuleDir + "gulp");
 const fs = require("fs");
 const path = require("path");
-const crypto = require("crypto");
 const del = require(ideModuleDir + "del");
 const revCollector = require(ideModuleDir + 'gulp-rev-collector');
 
@@ -32,8 +31,17 @@ gulp.task("preCreate_TBMini", copyLibsTask, function() {
 gulp.task("copyPlatformFile_TBMini", versiontask, function() {
 	releaseDir = path.dirname(releaseDir);
 	let adapterPath = path.join(layarepublicPath, "LayaAirProjectPack", "lib", "data", "taobaofiles");
-	copyLibsList = [`${adapterPath}/**/*.*`];
-	var stream = gulp.src(copyLibsList);
+	let hasPublishPlatform = 
+		fs.existsSync(path.join(releaseDir, "app.js")) &&
+		fs.existsSync(path.join(releaseDir, "app.json")) &&
+		fs.existsSync(path.join(releaseDir, "package.json"));
+	let copyLibsList;
+	if (hasPublishPlatform) {
+		copyLibsList = [`${adapterPath}/node_modules/layaengine/adapter.js`];
+	} else {
+		copyLibsList = [`${adapterPath}/**/*.*`];
+	}
+	var stream = gulp.src(copyLibsList, {base: adapterPath});
 	return stream.pipe(gulp.dest(releaseDir));
 });
 
@@ -74,6 +82,8 @@ gulp.task("modifyFile_TBMini", ["delFiles_TBMini"], function() {
 	indexFileContent = indexFileContent.replace(/loadLib(\(['"]libs\/)/gm, `require("layaengine/libs/`);
 	indexFileContent = indexFileContent.replace(/loadLib(\(['"])/gm, "require$1./");
 	indexFileContent = indexFileContent.replace(`require("./laya.js")`, `require("layaengine/laya.js")`);
+	// 特殊的，增加清除缓存
+	indexFileContent = indexFileContent.replace(/(require(\(['"][\w\/\.]+['"]\));?)/gm, "delete require.cache[require.resolve$2];\n$1");
 	fs.writeFileSync(indexFilePath, indexFileContent, "utf-8");
 })
 

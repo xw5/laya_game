@@ -29,6 +29,7 @@ export default class player extends Laya.Script {
 
         this.init();
 
+        Laya.SoundManager.playMusic("res/Sounds/FutureWorld_Dark_Loop_03.ogg", 0);
     }
 
     init() {
@@ -66,12 +67,13 @@ export default class player extends Laya.Script {
             // 游戏结束
             Laya.stage.event("gameOver");
             this.isBegin = false;
+            Laya.SoundManager.playSound("res/Sounds/CarCrash.ogg", 1);
         }
         if (other.label == "coin") {
             other.owner.getComponent(Car).recover();
             // 加分 todo
             Laya.stage.event("addScore", 10);
-            
+            Laya.SoundManager.playSound("res/Sounds/Bonus.ogg", 1);
         }
     }
 
@@ -95,7 +97,7 @@ export default class player extends Laya.Script {
 
     reset() {
         this.init();
-        this.isBegin = true;
+        this.isBegin = false;
     }
 
 }

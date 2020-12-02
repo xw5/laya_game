@@ -46,6 +46,7 @@ export default class PausePanel extends Laya.Script {
             this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).homeClick();
             this.owner.parent.getChildByName("player").getComponent(player).reset();
             Laya.timer.resume();
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
         });
 
         this.retryBtn.on(Laya.Event.CLICK, this, function() {
@@ -54,15 +55,31 @@ export default class PausePanel extends Laya.Script {
             this.owner.parent.getComponent(GameManage).reset();
             Laya.timer.resume();
             Laya.stage.event("startGame");
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
         });
 
         this.audioOff.on(Laya.Event.CLICK, this, function() {
-
+            Laya.stage.event("muted", true);
         });
 
         this.audioOn.on(Laya.Event.CLICK, this, function() {
-
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
+            Laya.stage.event("muted", false);
         });
+
+        Laya.stage.on("muted", this, this.muted);
+    }
+
+    muted(status) {
+        console.log("startPanel status:", status);
+        Laya.SoundManager.muted = status;
+        if (status) {
+            this.audioOff.visible = false;
+            this.audioOn.visible = true;
+        } else {
+            this.audioOff.visible = true;
+            this.audioOn.visible = false;
+        }
     }
     
     onEnable() {

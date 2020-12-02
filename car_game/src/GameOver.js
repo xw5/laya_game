@@ -36,6 +36,7 @@ export default class GameOver extends Laya.Script {
             this.owner.parent.getComponent(GameManage).homeClick();
             this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).homeClick();
             this.owner.parent.getChildByName("player").getComponent(player).reset();
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
         });
 
         this.retryBtn.on(Laya.Event.CLICK, this, function() {
@@ -43,6 +44,7 @@ export default class GameOver extends Laya.Script {
             this.owner.parent.getChildByName("player").getComponent(player).reset();
             this.owner.parent.getComponent(GameManage).reset();
             Laya.stage.event("startGame");
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
         });
     }
     

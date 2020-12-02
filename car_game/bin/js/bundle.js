@@ -98,6 +98,7 @@
 
             this.init();
 
+            Laya.SoundManager.playMusic("res/Sounds/FutureWorld_Dark_Loop_03.ogg", 0);
         }
 
         init() {
@@ -135,12 +136,13 @@
                 // 游戏结束
                 Laya.stage.event("gameOver");
                 this.isBegin = false;
+                Laya.SoundManager.playSound("res/Sounds/CarCrash.ogg", 1);
             }
             if (other.label == "coin") {
                 other.owner.getComponent(Car).recover();
                 // 加分 todo
                 Laya.stage.event("addScore", 10);
-                
+                Laya.SoundManager.playSound("res/Sounds/Bonus.ogg", 1);
             }
         }
 
@@ -164,7 +166,7 @@
 
         reset() {
             this.init();
-            this.isBegin = true;
+            this.isBegin = false;
         }
 
     }
@@ -182,27 +184,38 @@
 
         }
         
-        onEnable() {
+        onAwake() {
             this.btnPlay.on(Laya.Event.CLICK, this, this.startPlay);
             this.audioOn.on(Laya.Event.CLICK, this, this.audioOnFn);
             this.audioOff.on(Laya.Event.CLICK, this, this.audioOffFn);
+            Laya.stage.on("muted", this, this.muted);
         }
         startPlay() {
             console.log("游戏开始");
             this.owner.visible = false;
             Laya.stage.event("startGame");
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
         }
 
         audioOnFn() {
-            console.log("开启音乐");
-            this.audioOn.visible = false;
-            this.audioOff.visible = true;
+            Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
+            Laya.stage.event("muted", false);
         }
 
         audioOffFn() {
-            console.log("关闭音乐");
-            this.audioOff.visible = false;
-            this.audioOn.visible = true;
+            Laya.stage.event("muted", true);
+        }
+
+        muted(status) {
+            console.log("startPanel status:", status);
+            Laya.SoundManager.muted = status;
+            if (status) {
+                this.audioOff.visible = false;
+                this.audioOn.visible = true;
+            } else {
+                this.audioOff.visible = true;
+                this.audioOn.visible = false;
+            }
         }
 
         onDisable() {
@@ -426,6 +439,7 @@
                 this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).homeClick();
                 this.owner.parent.getChildByName("player").getComponent(player).reset();
                 Laya.timer.resume();
+                Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
             });
 
             this.retryBtn.on(Laya.Event.CLICK, this, function() {
@@ -434,15 +448,31 @@
                 this.owner.parent.getComponent(GameManage).reset();
                 Laya.timer.resume();
                 Laya.stage.event("startGame");
+                Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
             });
 
             this.audioOff.on(Laya.Event.CLICK, this, function() {
-
+                Laya.stage.event("muted", true);
             });
 
             this.audioOn.on(Laya.Event.CLICK, this, function() {
-
+                Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
+                Laya.stage.event("muted", false);
             });
+
+            Laya.stage.on("muted", this, this.muted);
+        }
+
+        muted(status) {
+            console.log("startPanel status:", status);
+            Laya.SoundManager.muted = status;
+            if (status) {
+                this.audioOff.visible = false;
+                this.audioOn.visible = true;
+            } else {
+                this.audioOff.visible = true;
+                this.audioOn.visible = false;
+            }
         }
         
         onEnable() {
@@ -485,6 +515,7 @@
                 this.owner.parent.getComponent(GameManage).homeClick();
                 this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).homeClick();
                 this.owner.parent.getChildByName("player").getComponent(player).reset();
+                Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
             });
 
             this.retryBtn.on(Laya.Event.CLICK, this, function() {
@@ -492,6 +523,7 @@
                 this.owner.parent.getChildByName("player").getComponent(player).reset();
                 this.owner.parent.getComponent(GameManage).reset();
                 Laya.stage.event("startGame");
+                Laya.SoundManager.playSound("res/Sounds/ButtonClick.ogg", 1);
             });
         }
         

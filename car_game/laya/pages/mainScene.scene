@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"Scene",
-    "selectedBox":2,
-    "selecteID":14,
+    "selectedBox":84,
+    "selecteID":78,
     "searchKey":"Scene",
     "props":{"width":1080,"sceneColor":"#000000","height":1920},
     "nodeParent":-1,
@@ -97,14 +97,13 @@
             "props":{"y":1514,"x":540,"width":120,"texture":"Sprites/Car1.png","pivotY":118,"pivotX":60,"name":"player","height":236},
             "nodeParent":2,
             "label":"player",
-            "isOpen":true,
+            "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":14,
             "child":[
                 {
-                    "x":30,
                     "type":"Script",
                     "switchAble":true,
                     "source":"src/player.js",
@@ -121,7 +120,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"RigidBody",
                     "switchAble":true,
                     "searchKey":"RigidBody",
@@ -137,7 +135,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"PolygonCollider",
                     "switchAble":true,
                     "searchKey":"PolygonCollider",
@@ -489,7 +486,8 @@
                     "hasChild":false,
                     "compId":79,
                     "child":[
-                        ]
+                        ],
+                    "$HIDDEN":false
                 },
                 {
                     "x":30,
@@ -503,7 +501,8 @@
                     "hasChild":false,
                     "compId":78,
                     "child":[
-                        ]
+                        ],
+                    "$HIDDEN":false
                 },
                 {
                     "x":30,
@@ -538,7 +537,6 @@
             "compId":93,
             "child":[
                 {
-                    "x":30,
                     "type":"Image",
                     "searchKey":"Image,pause_bg",
                     "props":{"y":0,"x":0,"width":1080,"skin":"Sprites/UI/bg.png","name":"pause_bg","height":1920},
@@ -552,7 +550,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Text",
                     "searchKey":"Text,over_txt",
                     "props":{"y":455,"x":0,"width":1085,"text":"GAME OVER","strokeColor":"#2c4507","stroke":5,"name":"over_txt","height":158,"fontSize":160,"color":"#be0d23","align":"center"},
@@ -566,7 +563,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Button",
                     "searchKey":"Button,home_btn",
                     "props":{"y":1155,"x":303,"stateNum":"1","skin":"Sprites/UI/ButtonHome2.png","name":"home_btn"},
@@ -580,7 +576,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Button",
                     "searchKey":"Button,retry_btn",
                     "props":{"y":1155,"x":627,"stateNum":"1","skin":"Sprites/UI/ButtonRestart.png","name":"retry_btn"},
@@ -594,7 +589,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Text",
                     "searchKey":"Text,score_txt",
                     "props":{"y":696,"x":0,"width":1085,"text":"Score:100","strokeColor":"#2c4507","stroke":5,"name":"score_txt","height":158,"fontSize":120,"color":"#8cbe0d","align":"center"},
@@ -608,7 +602,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Text",
                     "searchKey":"Text,best_score_txt",
                     "props":{"y":854,"x":0,"width":1085,"text":"BestScore:100","strokeColor":"#2c4507","stroke":5,"name":"best_score_txt","height":158,"fontSize":120,"color":"#4a5eee","align":"center"},
@@ -622,7 +615,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"Script",
                     "switchAble":true,
                     "source":"src/GameOver.js",

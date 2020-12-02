@@ -1,4 +1,5 @@
 D .
+R E043894 hemiheadbdit.ttf
 D comp
 P 9401CC40 blank.png
 P B03390E5 btn_close.png
@@ -33,6 +34,11 @@ P B9680947 vscroll$up.png
 P 7E990267 vscroll.png
 P E466EB1C vslider$bar.png
 P 2BFF7046 vslider.png
+D Sounds
+R C6CDAE6B Bonus.ogg
+R 5754B4DD ButtonClick.ogg
+R 8422B570 CarCrash.ogg
+R 1B1CFFB8 FutureWorld_Dark_Loop_03.ogg
 D Sprites
 P D73AD060 bonusGold_1.png
 P A330E3D9 bonusGold_2.png

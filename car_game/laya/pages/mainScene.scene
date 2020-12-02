@@ -1,12 +1,12 @@
 {
     "x":0,
     "type":"Scene",
-    "selectedBox":14,
-    "selecteID":66,
+    "selectedBox":72,
+    "selecteID":70,
     "searchKey":"Scene",
     "props":{"width":1080,"sceneColor":"#000000","height":1920},
     "nodeParent":-1,
-    "maxID":67,
+    "maxID":74,
     "label":"Scene",
     "isOpen":true,
     "isDirectory":true,
@@ -42,7 +42,8 @@
                     "compId":12,
                     "child":[
                         ]
-                }]
+                }],
+            "$HIDDEN":false
         },
         {
             "x":15,
@@ -72,7 +73,8 @@
                     "compId":13,
                     "child":[
                         ]
-                }]
+                }],
+            "$HIDDEN":true
         },
         {
             "x":15,
@@ -95,14 +97,13 @@
             "props":{"y":1514,"x":540,"width":120,"texture":"Sprites/Car1.png","pivotY":118,"pivotX":60,"name":"player","height":236},
             "nodeParent":2,
             "label":"player",
-            "isOpen":true,
+            "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":14,
             "child":[
                 {
-                    "x":30,
                     "type":"Script",
                     "switchAble":true,
                     "source":"src/player.js",
@@ -119,7 +120,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"RigidBody",
                     "switchAble":true,
                     "searchKey":"RigidBody",
@@ -135,7 +135,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"PolygonCollider",
                     "switchAble":true,
                     "searchKey":"PolygonCollider",
@@ -267,10 +266,10 @@
         {
             "x":15,
             "type":"Sprite",
-            "searchKey":"Sprite",
-            "props":{"y":1930,"width":1080,"height":20},
+            "searchKey":"Sprite,bottom_collider",
+            "props":{"y":1930,"width":1080,"name":"bottom_collider","height":20},
             "nodeParent":2,
-            "label":"Sprite",
+            "label":"bottom_collider",
             "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
@@ -304,6 +303,94 @@
                     "isAniNode":true,
                     "hasChild":false,
                     "compId":53,
+                    "child":[
+                        ]
+                }],
+            "$HIDDEN":false
+        },
+        {
+            "x":15,
+            "type":"Sprite",
+            "searchKey":"Sprite,gamePanel",
+            "props":{"name":"gamePanel"},
+            "nodeParent":2,
+            "label":"gamePanel",
+            "isOpen":true,
+            "isDirectory":true,
+            "isAniNode":true,
+            "hasChild":true,
+            "compId":72,
+            "child":[
+                {
+                    "x":30,
+                    "type":"Button",
+                    "searchKey":"Button,pause_btn",
+                    "props":{"y":87,"x":43,"stateNum":"1","skin":"Sprites/UI/ButtonPause.png","name":"pause_btn"},
+                    "nodeParent":72,
+                    "label":"pause_btn",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":68,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Text",
+                    "searchKey":"Text,best_txt",
+                    "props":{"y":103,"x":385,"width":673,"text":"Best:0","strokeColor":"#062d5f","stroke":5,"padding":"0,10,0,0","name":"best_txt","height":100,"fontSize":100,"color":"#0b68be","align":"right"},
+                    "nodeParent":72,
+                    "label":"best_txt",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":69,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Text",
+                    "searchKey":"Text,last_txt",
+                    "props":{"y":220,"x":381,"width":677,"text":"Last:0","strokeColor":"#470605","stroke":5,"padding":"0,10,0,0","name":"last_txt","height":80,"fontSize":80,"color":"#b54713","align":"right"},
+                    "nodeParent":72,
+                    "label":"last_txt",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":70,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Text",
+                    "searchKey":"Text,score_txt",
+                    "props":{"y":321,"x":203,"width":674,"text":"0","strokeColor":"#2c4507","stroke":5,"name":"score_txt","height":158,"fontSize":160,"color":"#4ae224","align":"center"},
+                    "nodeParent":72,
+                    "label":"score_txt",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":71,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Script",
+                    "switchAble":true,
+                    "source":"src/gamePanel.js",
+                    "searchKey":"Script,gamePanel",
+                    "removeAble":true,
+                    "props":{"score":"@node:71","pauseBtn":"@node:68","last":"@node:70","best":"@node:69"},
+                    "nodeParent":72,
+                    "label":"gamePanel",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":73,
                     "child":[
                         ]
                 }]

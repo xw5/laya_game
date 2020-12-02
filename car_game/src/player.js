@@ -60,6 +60,7 @@ export default class player extends Laya.Script {
         if (other.label == "coin") {
             other.owner.getComponent(Car).recover();
             // 加分 todo
+            Laya.stage.event("addScore", 10);
             
         }
     }

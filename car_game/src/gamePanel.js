@@ -16,6 +16,7 @@ export default class gamePanel extends Laya.Script {
     }
 
     onAwake() {
+        this.pauseBtn.on(Laya.Event.CLICK, this, this.pauseClick);
         // 用第三方字体加载
         Laya.loader.load('hemiheadbdit.ttf',Laya.Handler.create(this, function(font) {
             this.last.font = font.fontName;
@@ -26,13 +27,24 @@ export default class gamePanel extends Laya.Script {
         Laya.stage.on("startGame", this, function() {
             this.owner.visible = true;
             this.isBegin = true;
+            this.init();
+        });
+        Laya.stage.on("gameOver",this, function() {
+            this.owner.visible = false;
+            this.isBegin = false;
         });
         Laya.timer.loop(300, this, this.addScore);
         Laya.stage.on("addScore", this, this.addScore);
+        
+    }
+
+    init() {
         var bestScore = Laya.LocalStorage.getItem('bestScore');
         var lastScore = Laya.LocalStorage.getItem('lastScore');
-        this.best.text = bestScore ? bestScore : 0;
-        this.last.text = lastScore ? lastScore : 0;
+        this.best.text = "Best:"+(bestScore ? bestScore : 0);
+        this.last.text = "Last:"+(lastScore ? lastScore : 0);
+        this.score.text = 0;
+        this.scoreNum = 0;
     }
     
     onEnable() {
@@ -46,4 +58,14 @@ export default class gamePanel extends Laya.Script {
         this.scoreNum += score;
         this.score.text = this.scoreNum;
     }
+
+    pauseClick() {
+        Laya.timer.pause();
+        Laya.stage.event("pause");
+    }
+
+    homeClick() {
+        this.owner.visible = false; 
+    }
+
 }

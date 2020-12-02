@@ -4,6 +4,8 @@ import player from "./player"
 import startPanel from "./startPanel"
 import GameManage from "./GameManage"
 import gamePanel from "./gamePanel"
+import PausePanel from "./PausePanel"
+import GameOver from "./GameOver"
 import Car from "./Car"
 
 export default class GameConfig {
@@ -15,6 +17,8 @@ export default class GameConfig {
 		reg("startPanel.js",startPanel);
 		reg("GameManage.js",GameManage);
 		reg("gamePanel.js",gamePanel);
+		reg("PausePanel.js",PausePanel);
+		reg("GameOver.js",GameOver);
 		reg("Car.js",Car);
     }
 }

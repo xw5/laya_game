@@ -14,6 +14,7 @@ export default class Car extends Laya.Script {
     onAwake() {
         // this.rig = this.owner.getComponent(Laya.RigidBody);
         // this.rig.linearVelocity={x:0, y:this.speed};
+        Laya.timer.frameLoop(1, this, this.moveCar)
     }
     
     onEnable() {
@@ -22,7 +23,7 @@ export default class Car extends Laya.Script {
     onDisable() {
     }
 
-    onUpdate() {
+    moveCar() {
         this.owner.y = this.owner.y + Number(this.speed);
         //console.log("car.js:", this.owner.name);
     }

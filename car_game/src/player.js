@@ -23,7 +23,15 @@ export default class player extends Laya.Script {
         Laya.stage.on("startGame",this, function() {
             this.isBegin = true;
         });
+        Laya.stage.on("pause",this, function() {
+            this.isBegin = false;
+        });
 
+        this.init();
+
+    }
+
+    init() {
         // 随机小汽车初始位置
         var index = this.getRandom(0, this.limitPos.length);
         this.owner.pos(this.limitPos[index], 1360);
@@ -31,6 +39,7 @@ export default class player extends Laya.Script {
 
     mouseDown() {
         if (!this.isBegin) return;
+        if (Laya.stage.mouseY <= 500) return;
         var mousex = Laya.stage.mouseX;
         var stageW = Laya.stage.width / 2;
         var forceDirection = 0;
@@ -56,6 +65,7 @@ export default class player extends Laya.Script {
         if (other.label == "car") {
             // 游戏结束
             Laya.stage.event("gameOver");
+            this.isBegin = false;
         }
         if (other.label == "coin") {
             other.owner.getComponent(Car).recover();
@@ -77,6 +87,15 @@ export default class player extends Laya.Script {
     getRandom(min, max) {
         var value = (max -min)* Math.random();
         return parseInt(min + value);
+    }
+
+    resume() {
+        this.isBegin = true;
+    }
+
+    reset() {
+        this.init();
+        this.isBegin = true;
     }
 
 }

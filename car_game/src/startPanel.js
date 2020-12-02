@@ -36,4 +36,8 @@ export default class startPanel extends Laya.Script {
 
     onDisable() {
     }
+
+    homeClick() {
+        this.owner.visible = true;
+    }
 }

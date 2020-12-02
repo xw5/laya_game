@@ -23,6 +23,7 @@ export default class GameManage extends Laya.Script {
         this.arrX = [190,370,560,760];
         this.typeArr = [1, 2, 3, 4, 5, 6, 7];
         this.begin = false;
+        this.pause = false;
         this.totalCars = [];
     }
 
@@ -37,8 +38,10 @@ export default class GameManage extends Laya.Script {
             this.begin = true;
         });
         Laya.stage.on("gameOver",this, function() {
+            this.gameOver();
+        });
+        Laya.stage.on("pause",this, function() {
             this.begin = false;
-            this.clearCars();
         });
     }
     
@@ -75,5 +78,22 @@ export default class GameManage extends Laya.Script {
         this.totalCars.forEach(function(item){
             item.removeSelf();
         });
+    }
+
+    gameOver() {
+        this.begin = false;
+        this.clearCars();
+    }
+
+    homeClick() {
+        this.gameOver();
+    }
+
+    resume() {
+        this.begin = true;
+    }
+
+    reset() {
+        this.clearCars();
     }
 }

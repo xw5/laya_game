@@ -11,12 +11,13 @@
         
         onAwake() {
             this.height = this.owner.height;
+            Laya.timer.frameLoop(1, this, this.moveBg);
         }
 
         onDisable() {
         }
 
-        onUpdate() {
+        moveBg() {
             this.owner.y = this.owner.y + Number(this.speed);
             if (this.owner.y >= this.height) {
                 this.owner.y = -this.height;
@@ -40,6 +41,7 @@
         onAwake() {
             // this.rig = this.owner.getComponent(Laya.RigidBody);
             // this.rig.linearVelocity={x:0, y:this.speed};
+            Laya.timer.frameLoop(1, this, this.moveCar);
         }
         
         onEnable() {
@@ -48,7 +50,7 @@
         onDisable() {
         }
 
-        onUpdate() {
+        moveCar() {
             this.owner.y = this.owner.y + Number(this.speed);
             //console.log("car.js:", this.owner.name);
         }
@@ -90,7 +92,15 @@
             Laya.stage.on("startGame",this, function() {
                 this.isBegin = true;
             });
+            Laya.stage.on("pause",this, function() {
+                this.isBegin = false;
+            });
 
+            this.init();
+
+        }
+
+        init() {
             // 随机小汽车初始位置
             var index = this.getRandom(0, this.limitPos.length);
             this.owner.pos(this.limitPos[index], 1360);
@@ -98,6 +108,7 @@
 
         mouseDown() {
             if (!this.isBegin) return;
+            if (Laya.stage.mouseY <= 500) return;
             var mousex = Laya.stage.mouseX;
             var stageW = Laya.stage.width / 2;
             var forceDirection = 0;
@@ -123,6 +134,7 @@
             if (other.label == "car") {
                 // 游戏结束
                 Laya.stage.event("gameOver");
+                this.isBegin = false;
             }
             if (other.label == "coin") {
                 other.owner.getComponent(Car).recover();
@@ -144,6 +156,15 @@
         getRandom(min, max) {
             var value = (max -min)* Math.random();
             return parseInt(min + value);
+        }
+
+        resume() {
+            this.isBegin = true;
+        }
+
+        reset() {
+            this.init();
+            this.isBegin = true;
         }
 
     }
@@ -186,6 +207,10 @@
 
         onDisable() {
         }
+
+        homeClick() {
+            this.owner.visible = true;
+        }
     }
 
     class GameManage extends Laya.Script {
@@ -211,6 +236,7 @@
             this.arrX = [190,370,560,760];
             this.typeArr = [1, 2, 3, 4, 5, 6, 7];
             this.begin = false;
+            this.pause = false;
             this.totalCars = [];
         }
 
@@ -225,8 +251,10 @@
                 this.begin = true;
             });
             Laya.stage.on("gameOver",this, function() {
+                this.gameOver();
+            });
+            Laya.stage.on("pause",this, function() {
                 this.begin = false;
-                this.clearCars();
             });
         }
         
@@ -264,6 +292,23 @@
                 item.removeSelf();
             });
         }
+
+        gameOver() {
+            this.begin = false;
+            this.clearCars();
+        }
+
+        homeClick() {
+            this.gameOver();
+        }
+
+        resume() {
+            this.begin = true;
+        }
+
+        reset() {
+            this.clearCars();
+        }
     }
 
     class gamePanel extends Laya.Script {
@@ -284,7 +329,8 @@
         }
 
         onAwake() {
-            // 这里做事字体的加载
+            this.pauseBtn.on(Laya.Event.CLICK, this, this.pauseClick);
+            // 用第三方字体加载
             Laya.loader.load('hemiheadbdit.ttf',Laya.Handler.create(this, function(font) {
                 this.last.font = font.fontName;
                 this.best.font = font.fontName;
@@ -294,9 +340,24 @@
             Laya.stage.on("startGame", this, function() {
                 this.owner.visible = true;
                 this.isBegin = true;
+                this.init();
+            });
+            Laya.stage.on("gameOver",this, function() {
+                this.owner.visible = false;
+                this.isBegin = false;
             });
             Laya.timer.loop(300, this, this.addScore);
             Laya.stage.on("addScore", this, this.addScore);
+            
+        }
+
+        init() {
+            var bestScore = Laya.LocalStorage.getItem('bestScore');
+            var lastScore = Laya.LocalStorage.getItem('lastScore');
+            this.best.text = "Best:"+(bestScore ? bestScore : 0);
+            this.last.text = "Last:"+(lastScore ? lastScore : 0);
+            this.score.text = 0;
+            this.scoreNum = 0;
         }
         
         onEnable() {
@@ -309,6 +370,149 @@
             if (!this.isBegin) return;
             this.scoreNum += score;
             this.score.text = this.scoreNum;
+        }
+
+        pauseClick() {
+            Laya.timer.pause();
+            Laya.stage.event("pause");
+        }
+
+        homeClick() {
+            this.owner.visible = false; 
+        }
+
+    }
+
+    class PausePanel extends Laya.Script {
+
+        constructor() { 
+            super(); 
+            /** @prop {name:closeBtn, tips:"关闭按钮", type:Node, default:null}*/
+            this.closeBtn = null;
+            /** @prop {name:homeBtn, tips:"主页按钮", type:Node, default:null}*/
+            this.homeBtn = null;
+            /** @prop {name:retryBtn, tips:"重玩按钮", type:Node, default:null}*/
+            this.retryBtn = null;
+            /** @prop {name:audioOff, tips:"关闭声音", type:Node, default:null}*/
+            this.audioOff = null;
+            /** @prop {name:audioOn, tips:"开启声音", type:Node, default:null}*/
+            this.audioOn = null;
+            /** @prop {name:pauseTxt, tips:"暂停文字", type:Node, default:null}*/
+            this.pauseTxt = null;
+            // 更多参数说明请访问: https://ldc2.layabox.com/doc/?nav=zh-as-2-4-0
+        }
+
+        onAwake() {
+
+             // 用第三方字体加载
+             Laya.loader.load('hemiheadbdit.ttf',Laya.Handler.create(this, function(font) {
+                this.pauseTxt.font = font.fontName;
+            }));
+            Laya.stage.on("pause", this, function() {
+                this.owner.visible = true;
+            });
+
+            this.closeBtn.on(Laya.Event.CLICK, this, function() {
+                this.owner.visible = false;
+                Laya.timer.resume();
+                this.owner.parent.getChildByName("player").getComponent(player).resume();
+                this.owner.parent.getComponent(GameManage).resume();
+            });
+
+            this.homeBtn.on(Laya.Event.CLICK, this, function() {
+                this.owner.visible = false;
+                this.owner.parent.getChildByName("startPanel").getComponent(startPanel).homeClick();
+                this.owner.parent.getComponent(GameManage).homeClick();
+                this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).homeClick();
+                this.owner.parent.getChildByName("player").getComponent(player).reset();
+                Laya.timer.resume();
+            });
+
+            this.retryBtn.on(Laya.Event.CLICK, this, function() {
+                this.owner.visible = false;
+                this.owner.parent.getChildByName("player").getComponent(player).reset();
+                this.owner.parent.getComponent(GameManage).reset();
+                Laya.timer.resume();
+                Laya.stage.event("startGame");
+            });
+
+            this.audioOff.on(Laya.Event.CLICK, this, function() {
+
+            });
+
+            this.audioOn.on(Laya.Event.CLICK, this, function() {
+
+            });
+        }
+        
+        onEnable() {
+        }
+
+        onDisable() {
+        }
+    }
+
+    class GameOver extends Laya.Script {
+
+        constructor() { 
+            super(); 
+            /** @prop {name:homeBtn, tips:"主页按钮", type:Node, default:null}*/
+            this.homeBtn = null;
+            /** @prop {name:retryBtn, tips:"重玩按钮", type:Node, default:null}*/
+            this.retryBtn = null;
+            /** @prop {name:overTxt, tips:"游戏结束文字", type:Node, default:null}*/
+            this.overTxt = null;
+            /** @prop {name:scoreTxt, tips:"本局得分", type:Node, default:null}*/
+            this.scoreTxt = null;
+            /** @prop {name:bestScoreTxt, tips:"最高分", type:Node, default:null}*/
+            this.bestScoreTxt = null;
+            // 更多参数说明请访问: https://ldc2.layabox.com/doc/?nav=zh-as-2-4-0
+        }
+
+        onAwake() {
+            // 用第三方字体加载
+            Laya.loader.load('hemiheadbdit.ttf',Laya.Handler.create(this, function(font) {
+                this.overTxt.font = font.fontName;
+                this.scoreTxt.font = font.fontName;
+                this.bestScoreTxt.font = font.fontName;
+            }));
+
+            Laya.stage.on("gameOver", this, this.gameOver);
+
+            this.homeBtn.on(Laya.Event.CLICK, this, function() {
+                this.owner.visible = false;
+                this.owner.parent.getChildByName("startPanel").getComponent(startPanel).homeClick();
+                this.owner.parent.getComponent(GameManage).homeClick();
+                this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).homeClick();
+                this.owner.parent.getChildByName("player").getComponent(player).reset();
+            });
+
+            this.retryBtn.on(Laya.Event.CLICK, this, function() {
+                this.owner.visible = false;
+                this.owner.parent.getChildByName("player").getComponent(player).reset();
+                this.owner.parent.getComponent(GameManage).reset();
+                Laya.stage.event("startGame");
+            });
+        }
+        
+        onEnable() {
+        }
+
+        onDisable() {
+        }
+
+        gameOver() {
+           this.owner.visible = true;
+           var score = this.owner.parent.getChildByName("gamePanel").getComponent(gamePanel).scoreNum;
+           this.scoreTxt.text = "Score:"+score;
+           var highScore = Number(Laya.LocalStorage.getItem("bestScore"));
+           if (score > highScore) {
+                Laya.LocalStorage.setItem("bestScore", score);
+                this.bestScoreTxt.text = "BestScore:"+score;
+           } else {
+                this.bestScoreTxt.text = "BestScore:"+highScore;
+           }
+           Laya.LocalStorage.setItem("lastScore", score);
         }
     }
 
@@ -323,6 +527,8 @@
     		reg("startPanel.js",startPanel);
     		reg("GameManage.js",GameManage);
     		reg("gamePanel.js",gamePanel);
+    		reg("PausePanel.js",PausePanel);
+    		reg("GameOver.js",GameOver);
     		reg("Car.js",Car);
         }
     }
